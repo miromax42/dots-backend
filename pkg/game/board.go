@@ -1,6 +1,7 @@
 package game
 
 import (
+	"github.com/cockroachdb/errors"
 	"strconv"
 	"strings"
 )
@@ -38,4 +39,21 @@ func (b *Board) Render() string {
 	}
 
 	return buffer.String()
+}
+
+func (b *Board) Set(i, j int, t Tile) error {
+	iValid := 0 <= i && i < 10
+	jValid := 0 <= j && j < 10
+
+	if !iValid || !jValid {
+		return errors.Wrapf(ErrCoords, "i=%d,j=%d %v %v", i, j, iValid, jValid)
+	}
+
+	if !b[i][j].Available(t) {
+		return errors.Wrapf(ErrMove, "%s->%s", b[i][j], t)
+	}
+
+	b[i][j] = t
+
+	return nil
 }

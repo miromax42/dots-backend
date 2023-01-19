@@ -39,3 +39,14 @@ type Tile struct {
 func (t Tile) String() string {
 	return t.Side.String() + t.State.String() + Side(0).String()
 }
+
+func (t Tile) Available(next Tile) bool {
+	switch {
+	case t.State == empty:
+		return next.State == active
+	case t.State == active:
+		return next.State == grabbed && t.State != next.State
+	default:
+		return false
+	}
+}
